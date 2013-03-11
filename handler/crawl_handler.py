@@ -3,7 +3,7 @@ Created on June, 27, 2012
 
 @author: dhcui
 '''
-
+import datetime
 
 from ccrawler.utils.log import logging
 from ccrawler.policies.objects import url_analyser, crawl_priority_and_depth_evaluator
@@ -11,6 +11,7 @@ import ccrawler.handler.handler as handler
 #import ccrawler.db.crawlerdb as crawlerdb
 from ccrawler.modules.crawler_utils import CrawlerUtils
 import ccrawler.utils.misc as misc
+from ccrawler.utils.format import datetime2timestamp
 
 class CrawlHandler(handler.MessageHandler):
     '''
@@ -39,6 +40,7 @@ class CrawlHandler(handler.MessageHandler):
 
         #fill optional fields
         url_info = misc.clone_dict(message, fields = ["url", "source", "root_url", "parent_url", "crawl_priority", "crawl_depth"])
+        self._assign_url_info_defaults(url_info)
 
         if url_info["root_url"] is None:
             url_info["root_url"] = url
@@ -66,3 +68,26 @@ class CrawlHandler(handler.MessageHandler):
             handler.HandlerRepository.process(message_type, crawler_message)
 
         return {"status" : 1}
+
+    def _assign_url_info_defaults(self, url_info):
+        now = datetime2timestamp(datetime.datetime.utcnow())
+        url_info["created_time"] = now
+        url_info["crawled_count"] = 0
+        url_info["error_messages"] = []
+        url_info["retry_count"] = 0
+        url_info["encoding"] = None
+        url_info["encoding_created_time"] = None
+        url_info["redirect_url"] = None
+        #url_info["last_finished"] = None
+        #url_info["expires"] = now
+        url_info["doc"] = None
+        url_info["headers"] = None
+        # TODO not used?
+        url_info["md5"] = None
+        #url_info["process_status"] = True
+        url_info["comments"] = ""
+        url_info["redirect_count"] = 0
+
+        _, full_domain, _ = misc.get_url_domain_info(url_info['url'])
+        url_info["full_domain"] = full_domain
+

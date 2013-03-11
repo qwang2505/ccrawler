@@ -11,7 +11,7 @@ class CrawlerUtils(object):
     @classmethod
     def build_crawler_request_msg(cls, url, url_info):
         message = misc.clone_dict(url_info, ["url", "page_last_modified"])
-        message["__priority"] = url_info.get["recrawl_priority"]
+        message["__priority"] = url_info["crawl_priority"]
         message["meta"] = misc.clone_dict(url_info, common_settings.crawler_msg_meta_fields)
         if common_settings.strong_politeness:
             message["__group_hash"] = url_info["full_domain"]

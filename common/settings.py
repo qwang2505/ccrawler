@@ -444,4 +444,4 @@ policy_objects = {
 }
 
 #crawler_msg_meta_fields = ["url_class", "crawl_depth", "crawl_priority", "root_url", "encoding", "encoding_created_time", "crawl_type", "full_domain", "last_modified", "first_modified", "modified_count", "retry_count", "redirect_count", "page_last_modified", "url", "recrawl_priority"]
-crawler_msg_meta_fields = ["crawl_depth", "crawl_priority", "root_url", "encoding", "encoding_created_time", "crawl_type", "full_domain", "last_modified", "first_modified", "modified_count", "retry_count", "redirect_count", "page_last_modified", "url", "recrawl_priority"]
+crawler_msg_meta_fields = ["crawl_depth", "crawl_priority", "root_url", "encoding", "encoding_created_time", "crawl_type", "full_domain", "retry_count", "redirect_count", "url"]
