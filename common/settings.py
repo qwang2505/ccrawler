@@ -77,10 +77,10 @@ mq_settings = {
             "max_rpc_queue_count" : 1000,
             "rpc_reply_content_type" : "text/json",
         },
-        "crawler_request" : {
-            "exchange" : "exchange_crawler_request", #default: exchange_message_type
-            "queue" : "queue_crawler_request", #default: queue_message_type
-            "binding_prefix" : "binding_crawler_request", #default: binding_message_type
+        "__internal_crawler_request" : {
+            "exchange" : "exchange__internal_crawler_request", #default: exchange_message_type
+            "queue" : "queue__internal_crawler_request", #default: queue_message_type
+            "binding_prefix" : "binding__internal_crawler_request", #default: binding_message_type
             "priority_level" : Crawler_Priorities.Total,
             "group_mode" : True,
             "group_counts" : [2, 11, 31, 101], # 1 <= len(group_counts) <= priority_level, group_counts[i] >= 1
@@ -132,15 +132,12 @@ mq_settings = {
     #Note: one message must have just one MessageHandler.
     #Note: you need to add message name to message_types field
     "handler_configs" : {
-        "CrawlHandler" : {"type" : "ccrawler.handler.crawl_handler.CrawlHandler","input_message" : "crawl_request","mode" : "inproc","output_messages" : ["crawler_request"]},
-        "StaticCrawlerHandler" : {"type" : "ccrawler.static_crawler.static_crawler_handler.StaticCrawlerHandler", "input_message" : "crawler_request", "mode" : "viaqueue", "output_messages" : ["crawler_response"], "settings" : "ccrawler.static_crawler.settings"},
+        "CrawlHandler" : {"type" : "ccrawler.handler.crawl_handler.CrawlHandler","input_message" : "crawl_request","mode" : "inproc","output_messages" : ["__internal_crawler_request"]},
+        "StaticCrawlerHandler" : {"type" : "ccrawler.static_crawler.static_crawler_handler.StaticCrawlerHandler", "input_message" : "__internal_crawler_request", "mode" : "viaqueue", "output_messages" : ["crawler_response"], "settings" : "ccrawler.static_crawler.settings"},
         "DefaultCrawlerResponseHandler" : {"type" : "ccrawler.handler.default_crawler_response_handler.DefaultCrawlerResponseHandler","input_message" : "crawler_response","mode" : "inproc","output_messages" : ["crawl_request"]},
-        # not enable
-        "CrawlerResponseHandler" : {"type" : "ccrawler.handler.crawler_response_handler.CrawlerResponseHandler","input_message" : "crawler_response","mode" : "inproc","output_messages" : ["crawl_request"]},
-        "SortScheduler" : {"type" : "ccrawler.handler.sort_scheduler.SortScheduler", "elapsed" : 5, "output_messages" : ["crawler_request"]},
     },
     "client_config" : {
-        "message_types" : ["crawler_request", "crawl_request", "crawler_response"],
+        "message_types" : ["__internal_crawler_request", "crawl_request", "crawler_response"],
         "parameters" :  configuration.mq_client_config["parameters"],
         "aux_store" : configuration.mq_client_config["aux_store"],
     },
@@ -149,7 +146,8 @@ mq_settings = {
 hosted_handlers = {}
 
 for key, switch in configuration.handler_switches.items():
-    mq_settings["handler_configs"][key]["enabled"] = switch
+    if key in mq_settings['handler_configs']:
+        mq_settings["handler_configs"][key]["enabled"] = switch
 
 global_mq_client = None
 rabbitmq_blocking_client.config(logging)

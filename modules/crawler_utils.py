@@ -19,9 +19,9 @@ class CrawlerUtils(object):
             message["__group_hash"] = misc.md5(url)
 
         if url_info["crawl_type"] == "static":
-            message_type = "crawler_request"
+            message_type = "__internal_crawler_request"
         elif url_info["crawl_type"] == "dynamic":
-            message_type = "dynamic_crawler_request"
+            message_type = "__internal_dynamic_crawler_request"
         else:
             raise Exception("unsupported crawl_type %s" % url_info["crawl_type"])
 
