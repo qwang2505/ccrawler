@@ -133,7 +133,7 @@ diagnostics_db_config = {
 
 heart_beat_config = {
     "client_enabled" : True,
-    "client_class" : "heartbeat.HeartBeatClient",
+    "client_class" : "ccrawler.handler.heartbeat.HeartBeatClient",
     "client_interval" : 60 * 5,
     "server_address" : "localhost",
     "server_port" : 9090,
