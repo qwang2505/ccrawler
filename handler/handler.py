@@ -290,7 +290,7 @@ class HandlerRepository(object):
                     result = HandlerRepository.global_inproc_handlers[handler_name].process(message)
                     return result
 
-        raise Exception("message handler is not found for message_key:" % message_key)
+        raise Exception("message handler is not found for message_key: %s" % message_key)
 
     @classmethod
     def _fill_message(cls, message_key, message = None, **kw):

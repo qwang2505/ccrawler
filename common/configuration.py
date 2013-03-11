@@ -94,7 +94,8 @@ crawl_policies = {
 }
 
 handler_switches = {
-    "DefaultCrawlerResponseHandler" : True,
+    "MiddlewareHandler" : True,
+    "DefaultCrawlResponseHandler" : True,
     "CrawlerResponseHandler" : False,
     "CrawlHandler" : True,
     "StaticCrawlerHandler" : True,

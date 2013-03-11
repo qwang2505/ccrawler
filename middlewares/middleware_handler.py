@@ -23,7 +23,7 @@ from ccrawler.utils import decoder
 from ccrawler.utils.format import timestamp2datetime
 from ccrawler.cache.domain_decoding_cache import DomainDecodingCache
 
-class DefaultCrawlerResponseHandler(handler.MessageHandler):
+class MiddlewareHandler(handler.MessageHandler):
     '''
     required message fields:
         created in crawler:   url, original_url, status, doc, headers, page_last_modified, last_crawled, error_message
@@ -81,7 +81,10 @@ class DefaultCrawlerResponseHandler(handler.MessageHandler):
         #logging.debug("crawler_response process_main", crawl_status = message["crawl_status"], md5_hash = md5_hash, error_message = error_message)
         misc.copy_dict(update_map, message, ["doc", "first_modified", "last_modified"], soft = True)
         self._merge_error_message(error_type, error_message, update_map)
-        print decoded_doc
+        # process crawl_response message here
+        if decoded_doc is not None:
+            message['doc'] = decoded_doc
+        handler.HandlerRepository.process("crawl_response", message)
         return message
 
     def _decode_fields(self, url, message):

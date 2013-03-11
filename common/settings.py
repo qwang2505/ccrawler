@@ -93,7 +93,22 @@ mq_settings = {
                 ],
             }
         },
-        "crawler_response" : {
+        "__internal_crawler_response" : {
+            "message_fields" : {
+                "required" : [
+                    "url",
+                    "original_url",
+                    "page_last_modified",
+                    "last_crawled",
+                    "status",
+                    "doc",
+                    "headers",
+                    "error_message",
+                    "meta",
+                ],
+            }
+        },
+        "crawl_response" : {
             "message_fields" : {
                 "required" : [
                     "url",
@@ -133,11 +148,12 @@ mq_settings = {
     #Note: you need to add message name to message_types field
     "handler_configs" : {
         "CrawlHandler" : {"type" : "ccrawler.handler.crawl_handler.CrawlHandler","input_message" : "crawl_request","mode" : "inproc","output_messages" : ["__internal_crawler_request"]},
-        "StaticCrawlerHandler" : {"type" : "ccrawler.static_crawler.static_crawler_handler.StaticCrawlerHandler", "input_message" : "__internal_crawler_request", "mode" : "viaqueue", "output_messages" : ["crawler_response"], "settings" : "ccrawler.static_crawler.settings"},
-        "DefaultCrawlerResponseHandler" : {"type" : "ccrawler.handler.default_crawler_response_handler.DefaultCrawlerResponseHandler","input_message" : "crawler_response","mode" : "inproc","output_messages" : ["crawl_request"]},
+        "StaticCrawlerHandler" : {"type" : "ccrawler.static_crawler.static_crawler_handler.StaticCrawlerHandler", "input_message" : "__internal_crawler_request", "mode" : "viaqueue", "output_messages" : ["__internal_crawl_response"], "settings" : "ccrawler.static_crawler.settings"},
+        "MiddlewareHandler" : {"type" : "ccrawler.middlewares.middleware_handler.MiddlewareHandler","input_message" : "__internal_crawler_response","mode" : "inproc","output_messages" : ["crawl_response"]},
+        "DefaultCrawlResponseHandler" : {"type" : "ccrawler.handler.default_crawl_response_handler.DefaultCrawlResponseHandler","input_message" : "crawl_response","mode" : "inproc","output_messages" : ["crawl_reqest"]},
     },
     "client_config" : {
-        "message_types" : ["__internal_crawler_request", "crawl_request", "crawler_response"],
+        "message_types" : ["crawl_request", "__internal_crawl_request", "__internal_crawl_response", "crawl_response"],
         "parameters" :  configuration.mq_client_config["parameters"],
         "aux_store" : configuration.mq_client_config["aux_store"],
     },

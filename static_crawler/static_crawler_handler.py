@@ -107,7 +107,7 @@ class StaticCrawlerHandler(handler.MessageHandler):
             if result["headers"] is not None and result["headers"].has_key("Last-Modified"):
                 message["page_last_modified"] = result["headers"].get('Last-Modified')
 
-            handler.HandlerRepository.process("crawler_response", message)
+            handler.HandlerRepository.process("__internal_crawler_response", message)
             return result["meta"]
 
     def get_user_agent(self):
